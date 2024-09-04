@@ -108,38 +108,22 @@ resource "random_id" "bucket_suffix" {
   byte_length = 4
 }
 
-# S3 Bucket with random suffix, no ACL
+# S3 Bucket (without ACL)
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "my-unique-s3-bucket-${random_id.bucket_suffix.hex}"
 
   tags = {
     Name = "MyBucket"
   }
+}
 
-  # Enable versioning
-  versioning {
-    enabled = true
+# S3 Bucket Versioning
+resource "aws_s3_bucket_versioning" "my_bucket_versioning" {
+  bucket = aws_s3_bucket.my_bucket.id
+
+  versioning_configuration {
+    status = "Enabled"
   }
-
-  # Bucket policy to control access, instead of ACL
-  policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Effect = "Allow",
-        Principal = "*",
-        Action   = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:ListBucket"
-        ],
-        Resource = [
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}",
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}/*"
-        ]
-      }
-    ]
-  })
 }
 
 # IAM Role for EC2 to access S3
@@ -175,8 +159,8 @@ resource "aws_iam_policy" "s3_access_policy" {
         ],
         Effect   = "Allow",
         Resource = [
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}",
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}/*"
+          "arn:aws:s3:::${aws_s3_bucket.my_bucket.arn}",
+          "arn:aws:s3:::${aws_s3_bucket.my_bucket.arn}/*"
         ]
       }
     ]
