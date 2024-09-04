@@ -103,18 +103,18 @@ resource "aws_security_group" "allow_http_https" {
   }
 }
 
-# S3 Bucket
+# Generate a random ID for the bucket name to avoid collisions
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
+# S3 Bucket with random suffix
 resource "aws_s3_bucket" "my_bucket" {
-  bucket = "my-unique-s3-bucket-name-${random_id.bucket_suffix.hex}"  # Ensure uniqueness by appending a random ID
+  bucket = "my-unique-s3-bucket-${random_id.bucket_suffix.hex}"
 
   tags = {
     Name = "MyBucket"
   }
-}
-
-# Generate random ID for S3 bucket name suffix
-resource "random_id" "bucket_suffix" {
-  byte_length = 4
 }
 
 # S3 Bucket ACL (to replace deprecated acl argument)
