@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        S3_BUCKET = 'your-s3-bucket'  // Set your S3 bucket here
+        S3_BUCKET = 'my-unique-s3-bucket-b40d25ac'  // Set your S3 bucket here
         AWS_REGION = 'us-west-2'
         GIT_REPO = 'https://github.com/Phanendradant/spring-petclinic.git'
         GIT_BRANCH = 'main'  // Specify the branch you want to pull from
@@ -25,7 +25,7 @@ pipeline {
         stage('Upload to S3') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) { 
-                    sh 'aws s3 cp target/*.war s3://"${S3_BUCKET}"/spring-petclinic.war'
+                    sh 'aws s3 cp target/*.jar s3://"${S3_BUCKET}"/spring-petclinic.jar'  // Change to .jar
                 }
             }
         }
@@ -33,9 +33,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.war /home/ubuntu/spring-petclinic.war
+                    aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar  // Change to .jar
                     sudo systemctl stop tomcat
-                    sudo cp /home/ubuntu/spring-petclinic.war /var/lib/tomcat/webapps/
+                    sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat/webapps/
                     sudo systemctl start tomcat
                     '''
                 }
