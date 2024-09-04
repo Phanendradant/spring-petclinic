@@ -106,11 +106,16 @@ resource "aws_security_group" "allow_http_https" {
 # S3 Bucket
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "my-unique-s3-bucket-name"
-  acl    = "private"
 
   tags = {
     Name = "MyBucket"
   }
+}
+
+# S3 Bucket ACL (to replace deprecated acl argument)
+resource "aws_s3_bucket_acl" "my_bucket_acl" {
+  bucket = aws_s3_bucket.my_bucket.id
+  acl    = "private"
 }
 
 # IAM Role for EC2 to access S3
