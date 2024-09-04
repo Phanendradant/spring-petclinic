@@ -2,7 +2,7 @@ provider "aws" {
   region = "us-east-1"
 }
 
-# VPC
+# VPC setup
 resource "aws_vpc" "main_vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -19,44 +19,6 @@ resource "aws_subnet" "public_subnet" {
   tags = {
     Name = "PublicSubnet"
   }
-}
-
-# Private Subnet
-resource "aws_subnet" "private_subnet" {
-  vpc_id                  = aws_vpc.main_vpc.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "us-east-1a"
-  tags = {
-    Name = "PrivateSubnet"
-  }
-}
-
-# Internet Gateway
-resource "aws_internet_gateway" "main_igw" {
-  vpc_id = aws_vpc.main_vpc.id
-  tags = {
-    Name = "MainInternetGateway"
-  }
-}
-
-# Route Table for Public Subnet
-resource "aws_route_table" "public_rt" {
-  vpc_id = aws_vpc.main_vpc.id
-
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.main_igw.id
-  }
-
-  tags = {
-    Name = "PublicRouteTable"
-  }
-}
-
-# Associate Public Route Table to Public Subnet
-resource "aws_route_table_association" "public_rta" {
-  subnet_id      = aws_subnet.public_subnet.id
-  route_table_id = aws_route_table.public_rt.id
 }
 
 # Security Group allowing HTTP/HTTPS, SSH, and custom port 8080
@@ -117,15 +79,6 @@ resource "aws_s3_bucket" "my_bucket" {
   }
 }
 
-# S3 Bucket Versioning
-resource "aws_s3_bucket_versioning" "my_bucket_versioning" {
-  bucket = aws_s3_bucket.my_bucket.id
-
-  versioning_configuration {
-    status = "Enabled"
-  }
-}
-
 # IAM Role for EC2 to access S3
 resource "aws_iam_role" "ec2_role" {
   name = "ec2_s3_access_role"
@@ -156,7 +109,6 @@ resource "aws_iam_policy" "s3_access_policy" {
         Action = [
           "s3:ListBucket",
           "s3:PutObject",
-          "s3:PutObjectAcl",  # Required for multipart upload
           "s3:GetObject",
           "s3:CreateMultipartUpload",
           "s3:AbortMultipartUpload",
@@ -183,7 +135,7 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
   role = aws_iam_role.ec2_role.name
 }
 
-# EC2 Instance in the Public Subnet
+# EC2 Instance in the Public Subnet with Tomcat installation and setup
 resource "aws_instance" "web_instance" {
   ami                         = "ami-0e86e20dae9224db8"  # Ensure this AMI is valid in your region
   instance_type               = "t2.medium"
@@ -193,14 +145,15 @@ resource "aws_instance" "web_instance" {
   associate_public_ip_address  = true
   iam_instance_profile         = aws_iam_instance_profile.ec2_instance_profile.name
 
-user_data = <<-EOF
+  # Install Tomcat and create webapps directory
+  user_data = <<-EOF
               #!/bin/bash
               sudo apt update -y
-              sudo apt install -y apache2
-              sudo systemctl start apache2
-              sudo systemctl enable apache2
+              sudo apt install -y tomcat9
+              sudo systemctl start tomcat9
+              sudo systemctl enable tomcat9
+              sudo mkdir -p /var/lib/tomcat9/webapps/
               EOF
-
 
   tags = {
     Name = "WebServerInstance"
