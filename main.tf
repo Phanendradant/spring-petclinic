@@ -159,8 +159,8 @@ resource "aws_iam_policy" "s3_access_policy" {
         ],
         Effect   = "Allow",
         Resource = [
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.arn}",
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.arn}/*"
+          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}",
+          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}/*"
         ]
       }
     ]
