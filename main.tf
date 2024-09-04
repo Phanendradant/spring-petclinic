@@ -193,13 +193,14 @@ resource "aws_instance" "web_instance" {
   associate_public_ip_address  = true
   iam_instance_profile         = aws_iam_instance_profile.ec2_instance_profile.name
 
-  user_data = <<-EOF
+user_data = <<-EOF
               #!/bin/bash
-              yum update -y
-              yum install -y httpd
-              systemctl start httpd
-              systemctl enable httpd
+              sudo apt update -y
+              sudo apt install -y apache2
+              sudo systemctl start apache2
+              sudo systemctl enable apache2
               EOF
+
 
   tags = {
     Name = "WebServerInstance"
