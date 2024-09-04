@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         S3_BUCKET = 'your-s3-bucket'
-        AWS_REGION = 'us-east-1'
+        AWS_REGION = 'us-west-2'
         GIT_REPO = 'https://github.com/Phanendradant/spring-petclinic.git'
         GIT_BRANCH = 'main' // Specify the branch you want to pull from
     }
