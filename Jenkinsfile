@@ -31,9 +31,9 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    aws s3 cp s3://${S3_BUCKET}/spring-petclinic.war /home/ec2-user/spring-petclinic.war
+                    aws s3 cp s3://${S3_BUCKET}/spring-petclinic.war /home/ubuntu/spring-petclinic.war
                     sudo systemctl stop tomcat
-                    sudo cp /home/ec2-user/spring-petclinic.war /var/lib/tomcat/webapps/
+                    sudo cp /home/ubuntu/spring-petclinic.war /var/lib/tomcat/webapps/
                     sudo systemctl start tomcat
                     '''
                 }
