@@ -154,20 +154,16 @@ resource "aws_iam_policy" "s3_access_policy" {
       {
         Effect = "Allow",
         Action = [
-          "s3:ListBucket"
-        ],
-        Resource = [
-          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}"
-        ]
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
+          "s3:ListBucket",
           "s3:PutObject",
-          "s3:PutObjectAcl"  # Allow ACL for multipart upload
+          "s3:PutObjectAcl",  # Required for multipart upload
+          "s3:GetObject",
+          "s3:CreateMultipartUpload",
+          "s3:AbortMultipartUpload",
+          "s3:CompleteMultipartUpload"
         ],
         Resource = [
+          "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}",
           "arn:aws:s3:::${aws_s3_bucket.my_bucket.bucket}/*"
         ]
       }
