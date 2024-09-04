@@ -32,12 +32,15 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 script {
-                    sh '''
-                    aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar
-                    sudo systemctl stop tomcat
-                    sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat/webapps/
-                    sudo systemctl start tomcat
-                    '''
+                    // Retry the deployment steps to handle intermittent failures
+                    retry(3) {
+                        sh '''
+                        aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar
+                        sudo systemctl stop tomcat || true  # Ignore errors if Tomcat isn't running
+                        sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat/webapps/
+                        sudo systemctl start tomcat
+                        '''
+                    }
                 }
             }
         }
