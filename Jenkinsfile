@@ -3,11 +3,18 @@ pipeline {
     environment {
         S3_BUCKET = 'your-s3-bucket'
         AWS_REGION = 'us-east-1'
+        GIT_REPO = 'https://github.com/Phanendradant/spring-petclinic.git'
+        GIT_BRANCH = 'main' // Specify the branch you want to pull from
     }
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/Phanendradant/spring-petclinic.git'
+                script {
+                    retry(3) { // Retry up to 3 times in case of intermittent errors
+                        checkout([$class: 'GitSCM', branches: [[name: "${GIT_BRANCH}"]],
+                        userRemoteConfigs: [[url: "${GIT_REPO}"]]])
+                    }
+                }
             }
         }
         stage('Build') {
@@ -42,4 +49,3 @@ pipeline {
         }
     }
 }
-
