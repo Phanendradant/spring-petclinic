@@ -102,7 +102,7 @@ resource "aws_instance" "web_instance" {
   instance_type               = "t2.micro"
   subnet_id                   = aws_subnet.public_subnet.id
   security_groups             = [aws_security_group.allow_http_https.name]
-  key_name                    = "your-key-pair"  # Add your SSH key pair name
+  key_name                    = "Assignment.pem"  # Add your SSH key pair name
   associate_public_ip_address = true
 
   user_data = <<-EOF
