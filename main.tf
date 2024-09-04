@@ -98,8 +98,8 @@ resource "aws_security_group" "allow_http_https" {
 
 # EC2 Instance in the Public Subnet
 resource "aws_instance" "web_instance" {
-  ami                         = "ami-0c55b159cbfafe1f0"  # Amazon Linux AMI
-  instance_type               = "t2.micro"
+  ami                         = "ami-0e86e20dae9224db8"  
+  instance_type               = "t2.medium"
   subnet_id                   = aws_subnet.public_subnet.id
   security_groups             = [aws_security_group.allow_http_https.name]
   key_name                    = "Assignment.pem"  # Add your SSH key pair name
