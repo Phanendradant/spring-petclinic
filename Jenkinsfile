@@ -34,9 +34,9 @@ pipeline {
                 script {
                     sh '''
                     aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar
-                    sudo systemctl stop tomcat || true
-                    sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat/webapps/
-                    sudo systemctl start tomcat
+                    sudo systemctl stop tomcat9 || true
+                    sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat9/webapps/
+                    sudo systemctl start tomcat9
                     '''
                 }
             }
