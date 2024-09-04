@@ -1,16 +1,16 @@
 pipeline {
     agent any
     environment {
-        S3_BUCKET = 'my-unique-s3-bucket-bcada9db'  // Set your S3 bucket here
+        S3_BUCKET = 'my-unique-s3-bucket-bcada9db'
         AWS_REGION = 'us-west-2'
         GIT_REPO = 'https://github.com/Phanendradant/spring-petclinic.git'
-        GIT_BRANCH = 'main'  // Specify the branch you want to pull from
+        GIT_BRANCH = 'main'
     }
     stages {
         stage('Clone Repository') {
             steps {
                 script {
-                    retry(3) {  // Retry up to 3 times in case of intermittent errors
+                    retry(3) {
                         checkout([$class: 'GitSCM', branches: [[name: "${GIT_BRANCH}"]],
                         userRemoteConfigs: [[url: "${GIT_REPO}"]]])
                     }
@@ -32,11 +32,10 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 script {
-                    // Retry the deployment steps to handle intermittent failures
                     retry(3) {
                         sh '''
                         aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar
-                        sudo systemctl stop tomcat || true  # Ignore errors if Tomcat isn't running
+                        sudo systemctl stop tomcat || true  # Ignore errors if Tomcat is not running
                         sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat/webapps/
                         sudo systemctl start tomcat
                         '''
