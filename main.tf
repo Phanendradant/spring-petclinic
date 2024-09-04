@@ -101,7 +101,7 @@ resource "aws_instance" "web_instance" {
   ami                         = "ami-0e86e20dae9224db8"  
   instance_type               = "t2.medium"
   subnet_id                   = aws_subnet.public_subnet.id
-  security_group_ids          = [aws_security_group.allow_http_https.id]  # Use the security group ID here
+  vpc_security_group_ids       = [aws_security_group.allow_http_https.id]  # Use vpc_security_group_ids for VPC
   key_name                    = "project_key"  # Ensure this key pair exists in your AWS account
   associate_public_ip_address = true
 
