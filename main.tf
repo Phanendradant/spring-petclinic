@@ -101,8 +101,8 @@ resource "aws_instance" "web_instance" {
   ami                         = "ami-0e86e20dae9224db8"  
   instance_type               = "t2.medium"
   subnet_id                   = aws_subnet.public_subnet.id
-  security_groups             = [aws_security_group.allow_http_https.name]
-  key_name                    = "project_key.pem"  # Add your SSH key pair name
+  security_group_ids          = [aws_security_group.allow_http_https.id]  # Use the security group ID here
+  key_name                    = "project_key"  # Ensure this key pair exists in your AWS account
   associate_public_ip_address = true
 
   user_data = <<-EOF
@@ -121,4 +121,3 @@ resource "aws_instance" "web_instance" {
 output "instance_public_ip" {
   value = aws_instance.web_instance.public_ip
 }
-
