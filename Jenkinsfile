@@ -22,9 +22,18 @@ pipeline {
                 sh './mvnw clean package'
             }
         }
+        stage('Create S3 Bucket if Not Exists') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
+                    sh '''
+                    aws s3 ls "s3://${S3_BUCKET}" || aws s3 mb "s3://${S3_BUCKET}" --region ${AWS_REGION}
+                    '''
+                }
+            }
+        }
         stage('Upload to S3') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) { 
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
                     sh 'aws s3 cp target/*.jar s3://"${S3_BUCKET}"/spring-petclinic.jar'
                 }
             }
