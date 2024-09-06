@@ -42,7 +42,13 @@ pipeline {
             steps {
                 script {
                     sh '''
+                    # Download the jar from S3
                     aws s3 cp s3://"${S3_BUCKET}"/spring-petclinic.jar /home/ubuntu/spring-petclinic.jar
+                    
+                    # Fix file permission issues by using sudo and -S option for password input
+                    sudo chmod 777 /home/ubuntu/spring-petclinic.jar
+                    
+                    # Stop Tomcat, deploy the new jar, and restart Tomcat
                     sudo systemctl stop tomcat9 || true
                     sudo cp /home/ubuntu/spring-petclinic.jar /var/lib/tomcat9/webapps/
                     sudo systemctl start tomcat9
