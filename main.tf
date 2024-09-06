@@ -145,15 +145,7 @@ resource "aws_instance" "web_instance" {
   associate_public_ip_address  = true
   iam_instance_profile         = aws_iam_instance_profile.ec2_instance_profile.name
 
-  # Install Tomcat and create webapps directory
-  user_data = <<-EOF
-              #!/bin/bash
-              sudo apt update -y
-              sudo apt install -y tomcat9
-              sudo systemctl start tomcat9
-              sudo systemctl enable tomcat9
-              sudo mkdir -p /var/lib/tomcat9/webapps/
-              EOF
+
 
   tags = {
     Name = "WebServerInstance"
