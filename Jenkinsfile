@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        S3_BUCKET = 'my-unique-s3-bucket-cf15d592'
+        S3_BUCKET = 'my-unique-s3-bucket-588534b9'
         AWS_REGION = 'us-west-2'
         GIT_REPO = 'https://github.com/Phanendradant/spring-petclinic.git'
         GIT_BRANCH = 'main'
