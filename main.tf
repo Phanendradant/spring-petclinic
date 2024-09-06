@@ -159,7 +159,6 @@ resource "aws_instance" "web_instance" {
     Name = "WebServerInstance"
   }
 }
-
 # Output the instance's public IP
 output "instance_public_ip" {
   value = aws_instance.web_instance.public_ip
